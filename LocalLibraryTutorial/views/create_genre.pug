@@ -1,0 +1,13 @@
+extends layout
+
+block content
+
+    h1=title
+
+    form(action="", method="post")
+        div
+            input(type='text' placeholder='Genre name' name='genre_name')
+        div
+            input(type='text', placeholder='url' name='url_detail')
+
+        button(type="submit") Submit

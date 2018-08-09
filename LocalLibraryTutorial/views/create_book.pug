@@ -1,0 +1,13 @@
+extends layout
+
+block content
+
+    h1=title
+
+    form(action="", method="post")
+        div
+            input(type='text' placeholder='Book Title' name='book_title')
+        div
+            input(type='text', placeholder='ISBN' name='ISBN_code')
+
+        button(type="submit") Submit
