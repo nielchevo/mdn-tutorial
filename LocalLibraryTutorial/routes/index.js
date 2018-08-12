@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 /* Books page Routes */
 
 router.get('/books', function(req, res, next) {
-  res.render('list_book', {title: m_title});
+  res.render('list_book', {title: 'Book List'});
 });
 
 router.get('/book/add', function(req, res, next) {
@@ -22,7 +22,7 @@ router.get('/book/add', function(req, res, next) {
 /* Authors page Routes*/
 
 router.get('/authors', function(req, res, next) {
-  res.render('list_author', {title: m_title});
+  res.render('list_author', {title: 'Author list'});
 });
 
 router.get('/author/add', function(req, res, next) {
@@ -33,7 +33,7 @@ router.get('/author/add', function(req, res, next) {
 /* Genres page Routes*/
 
 router.get('/genres', function(req, res, next) {
-  res.render('list_genre', {title: m_title});
+  res.render('list_genre', {title: 'Genre List'});
 });
 
 router.get('/genre/add', function(req, res, next) {
@@ -44,7 +44,7 @@ router.get('/genre/add', function(req, res, next) {
 /* Book Instance page Routes*/
 
 router.get('/bookinstance', function(req, res, next) {
-  res.render('list_bookinstance', {title: m_title});
+  res.render('list_bookinstance', {title: 'Book Instance List'});
 });
 
 router.get('/bookinstance/add', function(req, res, next) {
