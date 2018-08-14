@@ -1,14 +1,14 @@
 var mongoose = require("mongoose");
-var moment = require("moment");
+var moment = require('moment');
 
 var Schema = mongoose.Schema;
 
 var author_schema = new Schema(
     {
-        first_name : {type: String, required :true, max: 100},
-        last_name = {type: String, required: true, max: 100},
-        date_of_birth = {type: Date},
-        date_of_death = {type: Date}
+        first_name:     {type: String, required: true, max: 100},
+        last_name:      {type: String, required: true, max: 100},
+        date_of_birth:  {type: Date},
+        date_of_death:  {type: Date}
     }
 );
 
