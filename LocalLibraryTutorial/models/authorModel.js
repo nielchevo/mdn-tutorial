@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 var author_schema = new Schema(
     {
         first_name:     {type: String, required: true, max: 100},
-        last_name:      {type: String, required: true, max: 100},
+        family_name:    {type: String, required: true, max: 100},
         date_of_birth:  {type: Date},
         date_of_death:  {type: Date}
     }
@@ -14,7 +14,7 @@ var author_schema = new Schema(
 
 //virtual for author's full name
 author_schema.virtual('name').get(function (){ 
-    return this.last_name + ', ' + this.first_name;
+    return this.family_name + ', ' + this.first_name;
 });
 
 author_schema.virtual('URL').get(function (){

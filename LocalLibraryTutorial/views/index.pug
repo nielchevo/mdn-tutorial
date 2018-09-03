@@ -13,8 +13,9 @@ block content
     p This book has the following record below :
 
     ul
-      li book stored : #BookStoredNumber
-      li book copied : #BookCopiedNumber
-      li book copied available : #BookAvaiableNumber
-      li total book author : #AuthorNumber
-      li total book genre : #GenresNumber
+      li Book Stored Count : !{data.book_count}
+      li Book Copy Count : !{data.book_instance_count}
+      li Book Copy Available : !{data.book_instance_available_count}
+      li Book Copy is Loaned : !{data.book_instance_loaned_count}
+      li Total count of Author : !{data.author_count}
+      li Total count of Genre  : !{data.genre_count}

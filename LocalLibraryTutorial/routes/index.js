@@ -3,16 +3,12 @@ var router = express.Router();
 
 /* Controllers */
 var authorController = require('../controllers/authorController');
-
+var bookController = require('../controllers/bookController');
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'My Local Library'});
-});
+router.get('/', bookController.index); 
 
 /* Books page Routes */
-router.get('/books', function(req, res, next) {
-  res.render('list_book', {title: 'Book List'});
-});
+router.get('/books', bookController.book_list);
 
 router.get('/book/add', function(req, res, next) {
   res.render('create_book', {title: 'Create book'});

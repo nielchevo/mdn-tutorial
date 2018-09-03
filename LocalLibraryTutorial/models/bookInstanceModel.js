@@ -12,7 +12,7 @@ var bookInstance_schema = new Schema({
 
 
 // Virtual for GET book instance's URL 
-bookInstance_schema.virtual.get(function() {
+bookInstance_schema.virtual('url').get(function() {
     return '/bookInstance/'+ this._id;
 });
 

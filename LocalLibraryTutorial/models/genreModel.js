@@ -8,7 +8,7 @@ var genre_schema = new Schema({
 
 
 //virtual for genre's URL
-genre_schema.virtual.get(function() {
+genre_schema.virtual('url').get(function() {
     return '/genre/'+ this._id;
 });
 

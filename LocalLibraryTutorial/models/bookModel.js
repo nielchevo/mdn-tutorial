@@ -13,7 +13,7 @@ var book_schema = new Schema({
 
 
 //virtual for book's URL
-book_schema.virtual.get(function() {
+book_schema.virtual('URL').get(function() {
     return '/book/'+ this._id;
 });
 

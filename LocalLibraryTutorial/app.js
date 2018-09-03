@@ -14,7 +14,7 @@ var app = express();
 var mongoose = require('mongoose');
 var mongodb_URL = 'mongodb://nathaniel:BelajarHosting2@ds229380.mlab.com:29380/local_library';
 
-mongoose.connect(mongodb_URL);
+mongoose.connect(mongodb_URL, {useNewUrlParser: true});
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', console.error.bind(console, 'mongodb connection error !! '));
 
