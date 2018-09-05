@@ -21,4 +21,18 @@ author_schema.virtual('URL').get(function (){
     return '/author/' + this._id;
 });
 
+author_schema.virtual('lifespan').get(function() {
+    let dateBirth= 'NULL';
+    let dateDeath= 'Present';
+    
+    if(this.date_of_birth) {
+        dateBirth = moment(this.date_of_birth).format('MMMM do, YYYY');
+    }
+    if(this.date_of_death) {
+        dateDeath = moment(this.date_of_death).format('MMMM do, YYYY');
+    }
+
+    return dateBirth +' - '+ dateDeath;
+})
+
 module.exports = mongoose.model('Author', author_schema);

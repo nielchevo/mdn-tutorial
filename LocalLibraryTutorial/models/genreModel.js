@@ -1,11 +1,10 @@
 var mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 var genre_schema = new Schema({
     name: {type: String, minlength: 3 , maxlength: 100}
 });
-
 
 //virtual for genre's URL
 genre_schema.virtual('url').get(function() {
@@ -13,4 +12,4 @@ genre_schema.virtual('url').get(function() {
 });
 
 //Exports model
-module.exports = mongoose.model('Genre', genre_schema);
+module.exports = mongoose.model('Genre', genre_schema)

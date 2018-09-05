@@ -7,6 +7,8 @@ block content
     p this is page contain all authors list 
 
     ul
-        li Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint autem similique enim magni quibusdam sequi tempora? Deleniti dolorem deserunt vel harum quibusdam, eveniet veniam magni ipsum, quasi odit odio accusamus.
-        li Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem corporis reiciendis maxime est, rerum autem quae voluptatum consequatur numquam et sint sit? Nobis beatae exercitationem assumenda recusandae dolorem aspernatur voluptates.
+    each author in Author_List
+        li #{author.family_name}, #{author.first_name} (#{author.lifespan})
+    else
+        li No Author Listed!
 

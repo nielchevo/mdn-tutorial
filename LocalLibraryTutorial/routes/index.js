@@ -4,6 +4,8 @@ var router = express.Router();
 /* Controllers */
 var authorController = require('../controllers/authorController');
 var bookController = require('../controllers/bookController');
+var genreController = require('../controllers/genreController');
+
 /* GET home page. */
 router.get('/', bookController.index); 
 
@@ -41,9 +43,7 @@ router.get('/author/:id/update', authorController.author_update_get);
 router.post('/author/:id/update', authorController.author_update_post);
 
 /* Genres page Routes*/
-router.get('/genres', function(req, res, next) {
-  res.render('list_genre', {title: 'Genre List'});
-});
+router.get('/genres', genreController.genre_list);
 
 router.get('/genre/add', function(req, res, next) {
   res.render('create_genre', {title: 'create genre'});

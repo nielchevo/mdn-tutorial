@@ -1,10 +1,16 @@
 
-var genreModel = require('../models/genreModel');
+var db_genreModel = require('../models/genreModel');
 
 /* genre Controller Functions */
 // Display list of all Genre.
-exports.genre_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre list');
+exports.genre_list = function(req, res, next) {
+    db_genreModel.find()
+        .populate('Genre')
+        .exec( function(err, results) {
+            if(err) {return next(err);}
+
+            res.render('list_genre', {title: 'All Genre Lists', error: err, Genre_List: results});
+        })
 };
 
 // Display detail page for a specific Genre.
@@ -41,3 +47,5 @@ exports.genre_update_get = function(req, res) {
 exports.genre_update_post = function(req, res) {
     res.send('NOT IMPLEMENTED: Genre update POST');
 };
+
+exports

@@ -1,10 +1,15 @@
 // importing author database
-var authorModel = require('../models/authorModel');
-
+var db_authorModel = require('../models/authorModel');
 
 /* author Controller Functions */
 exports.author_list = function(req, res) {
-    res.send('NOT YET IMPLEMENTED: Author Lists');
+    db_authorModel.find()
+        .populate('author')
+        .exec(function(err, results) {
+            if(err) {return next(error); }
+            // success, render data
+            res.render('list_author', {title: 'Author Lists', error: err, Author_List: results});
+        });
 };
 
 exports.author_detail = function(req, res) {

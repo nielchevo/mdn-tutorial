@@ -40,7 +40,7 @@ exports.index = function(req, res) {
 // Display list of all books.
 exports.book_list = function(req, res, next) {
 
-    db_bookModel.find({}, 'title')
+    db_bookModel.find({}, 'title author')
         .populate('author')
         .exec(function(err, list_books) {
             if(err) { return next(err); }
