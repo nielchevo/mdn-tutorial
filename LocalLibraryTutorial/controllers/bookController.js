@@ -4,7 +4,7 @@ var async = require('async');
 var db_bookModel = require('../models/bookModel');
 var db_bookInstanceModel = require('../models/bookInstanceModel');
 var db_authorModel = require('../models/authorModel');
-var db_genreModel = require('../models/genremodel');
+var db_genreModel = require('../models/genreModel');
 
 /* book  Controller Functions */
 // Render Handle for index.pug page

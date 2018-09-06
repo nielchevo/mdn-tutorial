@@ -1,4 +1,4 @@
-let db_genreModel = require('../models/genreModel');
+var db_genreModel = require('../models/genreModel');
 
 /* genre Controller Functions */
 // Display list of all Genre.
