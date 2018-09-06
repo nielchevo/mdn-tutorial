@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+var Schema = mongoose.Schema;
 
 var genre_schema = new Schema({
     name: {type: String, minlength: 3 , maxlength: 100}
