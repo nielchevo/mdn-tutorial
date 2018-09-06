@@ -5,6 +5,8 @@ var router = express.Router();
 var authorController = require('../controllers/authorController');
 var bookController = require('../controllers/bookController');
 var genreController = require('../controllers/genreController');
+var bookInstanceController = require('../controllers/bookInstanceController');
+
 
 /* GET home page. */
 router.get('/', bookController.index); 
@@ -58,9 +60,7 @@ router.get('/genre/update', function(req, res, next) {
 });
 
 /* Book Instance page Routes*/
-router.get('/bookinstance', function(req, res, next) {
-  res.render('list_bookinstance', {title: 'Book Instance List'});
-});
+router.get('/bookinstance', bookInstanceController.bookinstance_list);
 
 router.get('/bookinstance/add', function(req, res, next) {
   res.render('create_bookinstance', {title: 'Create Book Instance'});

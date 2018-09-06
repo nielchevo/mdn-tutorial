@@ -7,6 +7,7 @@ block content
     p this is page contain all book instance list 
 
     ul
-        li Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint autem similique enim magni quibusdam sequi tempora? Deleniti dolorem deserunt vel harum quibusdam, eveniet veniam magni ipsum, quasi odit odio accusamus.
-        li Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem corporis reiciendis maxime est, rerum autem quae voluptatum consequatur numquam et sint sit? Nobis beatae exercitationem assumenda recusandae dolorem aspernatur voluptates.
-
+    each Book_Instance in Book_Instance_List
+        li #{Book_Instance.book} , #{Book_Instance.imprint} - status : #{Book_Instance.status}
+    else
+        li No book instance list available

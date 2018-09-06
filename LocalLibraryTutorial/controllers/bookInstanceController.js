@@ -1,10 +1,16 @@
 // importing book instance database
-var bookInstanceModel = require('../models/bookInstanceModel');
+var db_bookInstanceModel = require('../models/bookInstanceModel');
 
 /* book instance Controller Functions */
 // Display list of all BookInstances.
-exports.bookinstance_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance list');
+exports.bookinstance_list = function(req, res, next) {
+    db_bookInstanceModel.find({})
+        .populate('BookInstance')
+        .exec(function(err, book_instance_list) {
+            if(err) {return next(err);}
+            //success, then render..
+            res.render('list_bookinstance', {title:'List of all book instance', error:err, Book_Instance_List: book_instance_list});
+        })
 };
 
 // Display detail page for a specific BookInstance.
