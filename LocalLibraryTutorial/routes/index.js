@@ -30,8 +30,6 @@ router.get('/book/update', function(req, res, next)  {
 /* Authors page Routes*/
 router.get('/authors', authorController.author_list);
 
-router.get('/author/:id', authorController.author_detail);
-
 router.get('/author/add', authorController.author_create_get);
 
 router.post('/author/add', authorController.author_create_post);
@@ -43,6 +41,8 @@ router.post('/author/:id/delete', authorController.author_delete_post);
 router.get('/author/:id/update', authorController.author_update_get);
 
 router.post('/author/:id/update', authorController.author_update_post);
+
+router.get('/author/:id', authorController.author_detail);
 
 /* Genres page Routes*/
 router.get('/genres', genreController.genre_list);

@@ -1,5 +1,9 @@
 var async = require('async');
 
+// validator and sanitize lib
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
+
 // importing author database
 var db_authorModel = require('../models/authorModel');
 var db_bookModel = require('../models/bookModel');
@@ -14,6 +18,71 @@ exports.author_list = function(req, res) {
             res.render('list_author', {title: 'Author Lists', error: err, Author_List: results});
         });
 };
+
+// Author create GET 
+exports.author_create_get = function(req, res, next) {
+    res.render('create_author', {title: 'Create Author form'});
+};
+
+// Author create POST
+exports.author_create_post = [
+    // get item from body
+    body('first_name').isLength({ min: 1 }).trim().withMessage('First name must be specified.')
+        .isAlphanumeric().withMessage('First name has non-alphanumeric characters.'),
+    body('family_name').isLength({ min: 1 }).trim().withMessage('Family name must be specified.')
+        .isAlphanumeric().withMessage('Family name has non-alphanumeric characters.'),
+    body('date_of_birth', 'Invalid date of birth').optional({ checkFalsy: true }).isISO8601(),
+    body('date_of_death', 'Invalid date of death').optional({ checkFalsy: true }).isISO8601(),
+
+    //validate
+    sanitizeBody('first_name').trim().escape(),
+    sanitizeBody('family_name').trim().escape(),
+    sanitizeBody('date_of_birth').toDate(),
+    sanitizeBody('date_of_death').toDate(),
+    
+    // Process handle after validation and sanitization 
+    (req, res, next) => {
+        const error = validationResult(req);
+
+        if( !error.isEmpty() ) {
+            // There are errors, Render again with sanitize values / error message.
+            res.render('create_author', {title: 'Create Author form', author: req.body, errors: error.array()});
+            return;
+        } else {
+
+            let create_author = new db_authorModel({
+                first_name  : req.body.first_name,
+                family_name : req.body.family_name,
+                date_of_birth: req.body.date_of_birth,
+                date_of_death: req.body.date_of_death
+            });
+
+            create_author.save(function (err) {
+                if(err) { return next(err); }
+                // successful, redirect to Author detail page
+                res.redirect(create_author.url);
+            });
+        }
+    }
+];
+
+// Author DELETE GET 
+exports.author_delete_get = function(req, res) {
+    res.send('NOT IMPLEMENTED : Author Delete GET');
+};
+// Author DELETE POST
+exports.author_delete_post = function(req, res) {
+    res.send('NOT IMPLEMENTED: Author Delete POST');
+}
+
+// Author UPDATE GET 
+exports.author_update_get = function(req, res) {
+    res.send('NOT IMPLEMENTED : Author UPDATE GET');
+};
+// Author UPDATE POST
+exports.author_update_post = function(req, res) {
+    res.send('NOT IMPLEMENTED: Author UPDATE POST');
+}
 
 exports.author_detail = function(req, res, next){
     async.parallel({
@@ -37,33 +106,6 @@ exports.author_detail = function(req, res, next){
         // Success, then render
         res.render('detail_author', {title:'Author Bio Details', err: error, Author_Detail: results.author, Author_Detail_Book: results.author_books});
     })
-}
-
-// Author create GET 
-exports.author_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED : Author Create GET');
-};
-// Author create POST
-exports.author_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Author Create POST');
-}
-
-// Author DELETE GET 
-exports.author_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED : Author Delete GET');
-};
-// Author DELETE POST
-exports.author_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Author Delete POST');
-}
-
-// Author UPDATE GET 
-exports.author_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED : Author UPDATE GET');
-};
-// Author UPDATE POST
-exports.author_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Author UPDATE POST');
 }
 
 exports
