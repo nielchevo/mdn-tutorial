@@ -30,7 +30,7 @@ router.get('/book/update', function(req, res, next)  {
 /* Authors page Routes*/
 router.get('/authors', authorController.author_list);
 
-router.get('author/:id', authorController.author_detail);
+router.get('/author/:id', authorController.author_detail);
 
 router.get('/author/add', authorController.author_create_get);
 
