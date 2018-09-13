@@ -1,14 +1,13 @@
 extends layout
 
 block content
+  h1= title
+  
+  ul
+  each book in book_list
+    li 
+      a(href=book.url) #{book.title} 
+      | (#{book.author.name})
 
-    h1=title
-
-    p this is page should contain all books list 
-
-    ul
-    each book in book_list
-        li 
-            a(href=book.url) #{book.title} (#{book.author.name})
-    else
-        li o data to be rendered!
+  else
+    li There are no books.
