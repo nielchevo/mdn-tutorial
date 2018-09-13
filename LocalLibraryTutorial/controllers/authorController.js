@@ -67,12 +67,65 @@ exports.author_create_post = [
 ];
 
 // Author DELETE GET 
-exports.author_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED : Author Delete GET');
+exports.author_delete_get = function(req, res, next) {
+    async.parallel({
+        author: function(callback) {
+            db_authorModel.findById(req.params.id)
+                .exec(callback);
+        },
+        author_book: function(callback) {
+            db_bookModel.find({'author': req.param.id}, 'title summary')
+                .exec(callback);
+        }
+    }, 
+    function(err, results) {
+        /* async callback handler */
+        if(err) { return next(err); }
+        // Success. then render to delete author page
+        res.render('delete_author', { title:'Delete Author', 
+                                      error: err,
+                                      Author: results.author,
+                                      Author_Books: results.author_book
+        })
+    });  
 };
+
 // Author DELETE POST
-exports.author_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Author Delete POST');
+exports.author_delete_post = function(req, res, next) {
+    let authorId = req.body.authorid;
+
+    async.parallel({
+        author: function(callback) {
+            //db_authorModel.find({'author': authorId })
+            db_authorModel.findById(authorId)
+                .exec(callback);
+        },
+        author_book: function(callback) {
+            db_bookModel.find({'author': authorId})
+                .exec(callback);
+        }
+    }, function(err,  results) {
+        /* Async callback handler */
+        if(err) { return next(err) ;}
+        // Success. then proceed delete
+        
+        if(results.author_book.isLength >= 1) {
+            // Author has book, render the same way as GET route 
+            res.render('delete_author', { title:'Delete Author', 
+                                            error: err,
+                                            Author: results.author,
+                                            Author_Books: results.author_book 
+            }) 
+        }
+        else {
+            // Author has NO books, proceed delete.
+            db_authorModel.findByIdAndRemove((authorId), function deleteAuthor(err) {
+                if (err) { return next(err); }
+                // Success. then redirect to author lists
+                res.redirect('/authors');
+            })
+        }
+    })
 }
 
 // Author UPDATE GET 

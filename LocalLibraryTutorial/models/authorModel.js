@@ -17,7 +17,7 @@ author_schema.virtual('name').get(function (){
     return this.family_name + ', ' + this.first_name;
 });
 
-author_schema.virtual('URL').get(function (){
+author_schema.virtual('url').get(function (){
     return '/author/' + this._id;
 });
 
