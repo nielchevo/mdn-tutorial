@@ -14,32 +14,28 @@ router.get('/', bookController.index);
 /* Books page Routes */
 router.get('/books', bookController.book_list);
 
-router.get('/book/add', function(req, res, next) {
-  res.render('create_book', {title: 'Create book'});
-});
+router.get('/book/add', bookController.book_create_get);
+router.post('/book/add', bookController.book_create_post);
 
-router.get('/book/delete', function(req, res, next)  {
-  res.render('delete_book', {title: 'Delete Book'});
-});
+router.get('/book/:id/delete', bookController.book_delete_get)
+router.post('/book/:id/delete', bookController.book_delete_post);
 
-router.get('/book/update', function(req, res, next)  {
-  res.render('update_book', {title: 'Update Book'});
-});
+router.get('/book/:id/update', bookController.book_update_get);
+router.post('/book/:id/update', bookController.book_update_post);
+
+router.get('/book/:id', bookController.book_detail);
 
 
 /* Authors page Routes*/
 router.get('/authors', authorController.author_list);
 
 router.get('/author/add', authorController.author_create_get);
-
 router.post('/author/add', authorController.author_create_post);
 
 router.get('/author/:id/delete', authorController.author_delete_get);
-
 router.post('/author/:id/delete', authorController.author_delete_post);
 
 router.get('/author/:id/update', authorController.author_update_get);
-
 router.post('/author/:id/update', authorController.author_update_post);
 
 router.get('/author/:id', authorController.author_detail);
