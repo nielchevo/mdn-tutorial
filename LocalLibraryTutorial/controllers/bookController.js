@@ -1,6 +1,6 @@
 var async = require('async');
 
-const { htmlBody, validatorResults } = require('express-validator/check');
+const { body, validatorResults } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
 // importing book database
@@ -59,8 +59,74 @@ exports.book_create_get = function(req, res, next) {
 
 // Handle book create on POST.
 exports.book_create_post = [
-    // TODO:
-]
+    (req, res, next) => {
+        if(!(req.body.genre instanceof Array)) {
+            if(typeof req.body.genre === 'undefined') {
+                req.body.genre = [];
+            } 
+            else {
+                req.body.genre = new Array(req.body.genre);
+            }
+        }
+        next();
+    },
+
+    // Validate fields
+    body('title', 'Title must not be empty!').isLength({min: 1}).trim(),
+    body('author', 'Author must not be empty!').isLength({min: 1}).trim(),
+    body('summary', 'Summary must not be empty!').isLength({min: 1}).trim(),
+    body('isbn', 'ISBN must not be empty!').isLength({min: 1}).trim(),
+
+    //sanitize fields
+    sanitizeBody('*').trim().escape(),
+    sanitizeBody('genre.*').trim().escape(),
+
+    // Proceed to db ater valid and sanitized
+    (res, req, next) => {
+
+        const errors = validatorResults(req);
+
+        let book_input = new Book({ title: req.body.title,
+                                    author: req.body.author, 
+                                    summary: req.body.summary,
+                                    isbn: req.body.isbn,
+                                    genre: req.body.genre })
+        if (!errors.isEmpty()) {
+
+            async.parallel({
+                authors: function(callback) {
+                    db_authorModel.find(callback);
+                },
+                genres: function(callback) {
+                    db_genreModel.find(callback);
+                }
+            }, function(err, results) {
+                if(err) {return next(err); }
+
+                // Mark our selected genres as checked
+                for (let i = 0; i < results.genres.length; i++) {
+                    if(book.genre.indexOf(results.genre[i]._id) > -1) {
+                        results.genre[i].checked = 'true';
+                    }
+                }
+                res.render('create_book', { title: 'Create Book', 
+                                            book: book, 
+                                            authors: results.authors,
+                                            genre: results.genres, 
+                                            errors: errors.array() 
+                                        });
+            });
+        }
+        else {
+           // No errors the proceed save to db. 
+            book_input.save( function(err) {
+                if(err) { return next(err); }
+                // Success. redirect to main page
+                res.redirect(db_bookModel.url);
+            });
+        }
+    }
+];
 
 // Display book delete form on GET.
 exports.book_delete_get = function(req, res, next) {
@@ -82,7 +148,6 @@ exports.book_update_post = function(req, res) {
     res.send('NOT IMPLEMENTED: Book update POST');
 };
 
-
 // Display detail page for a specific book.
 exports.book_detail = function(req, res, next) {
     let bookId = req.params.id;
@@ -90,6 +155,8 @@ exports.book_detail = function(req, res, next) {
     async.parallel({
         book_func: function(callback) {
             db_bookModel.findById(bookId)
+                .populate('author')
+                .populate('genre')
                 .exec(callback);
         },
         book_instance_func: function(callback) {
@@ -100,6 +167,12 @@ exports.book_detail = function(req, res, next) {
     }, function(err, results) {
         // Async callback   
         if (err) { return next(err); }
+
+        if(results.book_func == null) {
+            let err = new Error('Book not found!');
+            err.status = 404;
+            return next(err);
+        }
 
         res.render('detail_book', { title:'Book Detail', 
                                     error: err,
