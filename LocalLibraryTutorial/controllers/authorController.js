@@ -167,29 +167,33 @@ exports.author_update_post = [
     sanitizeBody('family_name').trim().escape(),
     sanitizeBody('date_of_birth').toDate(),
     sanitizeBody('date_of_death').toDate(),
-    
-    (res, req, next) => {
-        
-        const error = validationResult(req);
 
-        let author_update = new db_authorModel({
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+        const errors = validationResult(req);
+        let authorId = req.params.id;
+        
+        var author_update = new db_authorModel({
             first_name  : req.body.first_name,
             family_name : req.body.family_name,
             date_of_birth: req.body.date_of_birth,
             date_of_death: req.body.date_of_death,
-            _id: req.params.id
+            _id: authorId
         });
 
-        if( !error.isEmpty() ) {
+        if( !errors.isEmpty() ) {
             // There are errors, Render again with sanitize values / error message.
-            res.render('create_author', {title: 'Update author form', author: req.body, errors: error.array()});
+            res.render('create_author', {title: 'Update author form', author: author, errors: error.array()});
             return;
         }
         else {
-            author_update.findByIdAndUpdate(authorId, {}, function(err, updateAuthor) {
-                if(err) { return next(err); }
-                // Success. then update to db
-                res.redirect(updateAuthor.url);
+            db_authorModel.findByIdAndUpdate(authorId, author_update, {}, function(err, resultsUpdated) {
+                if(err) { 
+                    return next(err);
+                }
+
+                // Success. then redirect to url
+                res.redirect(resultsUpdated.url);
             });
         }
     }
@@ -218,5 +222,3 @@ exports.author_detail = function(req, res, next){
         res.render('detail_author', {title:'Author Bio Details', err: error, Author_Detail: results.author, Author_Detail_Book: results.author_books});
     })
 }
-
-exports
