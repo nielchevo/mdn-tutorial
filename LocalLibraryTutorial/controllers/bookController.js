@@ -99,11 +99,11 @@ exports.book_create_post = [
     sanitizeBody('genre.*').trim().escape(),
 
     // Proceed to db ater valid and sanitized
-    (res, req, next) => {
+    (req, res, next) => {
 
         const errors = validationResult(req);
         
-        let book_input = new db_bookModel({ 
+        let create_book = new db_bookModel({ 
                                         title: req.body.title,
                                         author: req.body.author,
                                         summary: req.body.summary,
@@ -112,7 +112,9 @@ exports.book_create_post = [
         });
 
         if (!errors.isEmpty()) {
+            //handle error sanitize & validation
 
+            // if error then re-render author and genre form.
             async.parallel({
                 authors: function(callback) {
                     db_authorModel.find(callback);
@@ -121,29 +123,34 @@ exports.book_create_post = [
                     db_genreModel.find(callback);
                 }
             }, function(err, results) {
-                // Async callback handler.
-                if(err) {return next(err); }
+                // Async callback handle 
+                if(err) {
+                    return next(err);
+                }
 
-                // Mark our selected genres as checked
+                // Mark our selected genres as checked.
                 for (let i = 0; i < results.genres.length; i++) {
-                    if(book.genre.indexOf(results.genre[i]._id) > -1) {
-                        results.genre[i].checked = 'true';
+                    if (book.genre.indexOf(results.genres[i]._id) > -1) {
+                        results.genres[i].checked='true';
                     }
                 }
-                res.render('create_book', { title: 'Create Book', 
-                                            book: results.book, 
-                                            authors: results.authors,
-                                            genre: results.genres, 
+
+                res.render('create_book', { title: 'Create Book',
+                                            authors:results.authors, 
+                                            genres:results.genres, 
+                                            book: create_book, 
                                             errors: errors.array() 
                                         });
             });
-        }
-        else {
-           // No errors the proceed save to db. 
-            book_input.save( function(err) {
-                if(err) { return next(err); }
-                // Success. redirect to main page
-                res.redirect(db_bookModel.url);
+            return;
+
+        } else {
+            create_book.save( function(err, results) {
+                if (err) {
+                    return next(err);
+                }
+                // Success. then redirect to book url
+                res.redirect(create_book.url);
             });
         }
     }
