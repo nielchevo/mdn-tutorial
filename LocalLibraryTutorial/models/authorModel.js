@@ -21,6 +21,18 @@ author_schema.virtual('url').get(function (){
     return '/author/' + this._id;
 });
 
+author_schema
+.virtual('date_of_birth_yyyy_mm_dd')
+.get(function () {
+  return moment(this.date_of_birth).format('YYYY-MM-DD');
+});
+
+author_schema
+.virtual('date_of_death_yyyy_mm_dd')
+.get(function () {
+  return moment(this.date_of_death).format('YYYY-MM-DD');
+});
+
 author_schema.virtual('lifespan').get(function() {
     let dateBirth= 'NULL';
     let dateDeath= 'Present';

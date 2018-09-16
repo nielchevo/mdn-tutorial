@@ -1,13 +1,14 @@
-var async = require('async');
-
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
 
 // importing book database
 var db_bookModel = require('../models/bookModel');
 var db_bookInstanceModel = require('../models/bookInstanceModel');
 var db_authorModel = require('../models/authorModel');
 var db_genreModel = require('../models/genreModel');
+
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
+
+var async = require('async');
 
 /* book  Controller Functions */
 // Render Handle for index.pug page
@@ -78,13 +79,11 @@ exports.book_create_get = function(req, res, next) {
 // Handle book create on POST.
 exports.book_create_post = [
     (req, res, next) => {
-        if(!(req.body.genre instanceof Array)) {
-            if(typeof req.body.genre === 'undefined') {
-                req.body.genre = [];
-            } 
-            else {
-                req.body.genre = new Array(req.body.genre);
-            }
+        if(!(req.body.genre instanceof Array)){
+            if(typeof req.body.genre==='undefined')
+            req.body.genre=[];
+            else
+            req.body.genre=new Array(req.body.genre);
         }
         next();
     },
@@ -103,7 +102,7 @@ exports.book_create_post = [
     (res, req, next) => {
 
         const errors = validationResult(req);
-
+        
         let book_input = new db_bookModel({ 
                                         title: req.body.title,
                                         author: req.body.author,
