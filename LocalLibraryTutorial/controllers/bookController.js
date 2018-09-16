@@ -1,6 +1,6 @@
 var async = require('async');
 
-const { body, validatorResults } = require('express-validator/check');
+const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
 // importing book database
@@ -54,7 +54,25 @@ exports.book_list = function(req, res, next) {
 
 // Display book create form on GET.
 exports.book_create_get = function(req, res, next) {
-    res.render('create_book', {title: 'Create new book listing'});
+
+    async.parallel({
+        authors: function(callback) {
+            db_authorModel.find(callback);
+        },
+        genres: function(callback) {
+            db_genreModel.find(callback);
+        },
+    }, function (err, results) {
+        // Async handle callback
+        if(err) {
+            return next(err);
+        }
+        
+        res.render('create_book', { title: 'Create Book',
+                                    authors: results.authors,
+                                    genres: results.genres,
+                                });
+    });
 };
 
 // Handle book create on POST.
@@ -84,13 +102,16 @@ exports.book_create_post = [
     // Proceed to db ater valid and sanitized
     (res, req, next) => {
 
-        const errors = validatorResults(req);
+        const errors = validationResult(req);
 
-        let book_input = new Book({ title: req.body.title,
-                                    author: req.body.author, 
-                                    summary: req.body.summary,
-                                    isbn: req.body.isbn,
-                                    genre: req.body.genre })
+        let book_input = new db_bookModel({ 
+                                        title: req.body.title,
+                                        author: req.body.author,
+                                        summary: req.body.summary,
+                                        isbn: req.body.isbn,
+                                        genre: req.body.genre
+        });
+
         if (!errors.isEmpty()) {
 
             async.parallel({
@@ -101,6 +122,7 @@ exports.book_create_post = [
                     db_genreModel.find(callback);
                 }
             }, function(err, results) {
+                // Async callback handler.
                 if(err) {return next(err); }
 
                 // Mark our selected genres as checked
@@ -110,7 +132,7 @@ exports.book_create_post = [
                     }
                 }
                 res.render('create_book', { title: 'Create Book', 
-                                            book: book, 
+                                            book: results.book, 
                                             authors: results.authors,
                                             genre: results.genres, 
                                             errors: errors.array() 
