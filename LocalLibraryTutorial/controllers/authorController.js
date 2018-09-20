@@ -115,7 +115,7 @@ exports.author_delete_post = function(req, res, next) {
                                             error: err,
                                             Author: results.author,
                                             Author_Books: results.author_book 
-            }) 
+            }); 
         }
         else {
             // Author has NO books, proceed delete.
@@ -123,7 +123,7 @@ exports.author_delete_post = function(req, res, next) {
                 if (err) { return next(err); }
                 // Success. then redirect to author lists
                 res.redirect('/authors');
-            })
+            });
         }
     })
 }

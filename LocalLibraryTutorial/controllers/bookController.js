@@ -158,12 +158,77 @@ exports.book_create_post = [
 
 // Display book delete form on GET.
 exports.book_delete_get = function(req, res, next) {
-    res.render('delete_book', {title: 'Delete a book'});
+    let bookId = req.params.id;
+
+    async.parallel({
+        Book: function(callback){
+            db_bookModel.findById(bookId )
+                .populate('author')
+                .populate('genre')
+                .exec(callback);
+        },
+        Book_Instances: function(callback) {
+            db_bookInstanceModel.find({'book': bookId})
+                .exec(callback);
+        }
+    }, function(err, results) {
+        // Async callback handler
+        if(err) {
+            return next(err);
+        }
+        // Success. then render delete view 
+        res.render('delete_book', {title: 'Delete Book',
+                                    book: results.Book,
+                                    book_instances: results.Book_Instances,
+                                    error: err
+                                })
+    });
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book delete POST');
+exports.book_delete_post = function(req, res, next) {
+    let bookId = req.params.id;
+
+    async.parallel({
+        // Async tasks
+        Book: function(callback) {
+            db_bookModel.findById(bookId)
+               .populate('author')
+               .populate('genre')
+               .exec(callback);
+        },
+        Book_Instances: function(callback) {
+            db_bookInstanceModel.find({'book': bookId})
+               .exec(callback);
+        }
+    }, function(err, results) {
+        // Async callback handler
+        if(err) {
+            return next(err);
+        }
+
+        if(results.Book_Instances.length >= 1) {
+            // if book has instances, notice to view to remove the book instances first.
+            res.render('delete_book', {title: 'Delete Book',
+                                      book: results.Book,
+                                      book_instances: results.Book_Instances,
+                                      error: err 
+            });
+        }
+        else {
+            // Delete the book by book ID
+            db_bookModel.findByIdAndRemove({'_id':bookId}, {}, function deleteBook(err, result) {
+                if(err) {
+                    return next(err);
+                }
+
+                // Success. Redirect to book lists view
+                res.redirect('/books');
+            });
+        }
+
+    });
+
 };
 
 // Display book update form on GET.
