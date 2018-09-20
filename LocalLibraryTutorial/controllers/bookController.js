@@ -78,6 +78,7 @@ exports.book_create_get = function(req, res, next) {
 
 // Handle book create on POST.
 exports.book_create_post = [
+    // Convert genre checkbox body view to an array
     (req, res, next) => {
         if(!(req.body.genre instanceof Array)){
             if(typeof req.body.genre==='undefined')
@@ -232,14 +233,116 @@ exports.book_delete_post = function(req, res, next) {
 };
 
 // Display book update form on GET.
-exports.book_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book update GET');
+exports.book_update_get = function(req, res, next) {
+    async.parallel({
+        // Async Tasks
+        Book: function(callback) {
+            db_bookModel.findById(req.params.id)
+              .populate('genre')
+              .exec(callback);
+        },
+        Author : function(callback) {
+            db_authorModel.find({})
+              .exec(callback);
+        },
+        Genre: function(callback) {
+            db_genreModel.find({})
+              .exec(callback);
+        }
+    }, function(err, results) {
+        // Async callback handler
+        if(err) {
+            return next(err);
+        }
+
+        if(results.Book == null)
+        {
+            var error = new Error('Book Not Found !!');
+            err.status = 404;
+            return next(err);
+        }
+
+        // To mark check the genres of the book
+        for(let allGenre_Iter=0; allGenre_Iter < results.Genre.length; allGenre_Iter++) {
+            for (let Book_Iter = 0; Book_Iter < results.Book.genre.length; Book_Iter++) {
+                if(results.Genre[allGenre_Iter]._id.toString() == results.Book.genre[Book_Iter]._id.toString()) {
+                    results.Genre[allGenre_Iter].checked ='true';
+                }
+            }
+        }
+
+        // Success. then render to view
+        res.render('create_book', { title: 'Update Book', 
+                                    book: results.Book,
+                                    authors: results.Author,
+                                    genres: results.Genre,
+                                    error: err                          
+                                });
+    });
 };
 
 // Handle book update on POST.
-exports.book_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book update POST');
-};
+exports.book_update_post = [ 
+    
+    // GET and convert genre checkbox to an array.
+    (req, res, next) => {
+        if(!(req.body.genre instanceof Array)){
+            if(typeof req.body.genre==='undefined')
+                req.body.genre=[];
+            else
+                req.body.genre=new Array(req.body.genre);
+        }
+        next();
+    },
+
+    // Validate body Form fields
+    body('title', 'Title must not be empty !').isLength({min: 1}).trim(),
+    body('author', 'Author must not be empty !').isLength({min: 1}).trim(),
+    body('summary', 'Summary must not be empty !').isLength({min: 1}).trim(),
+    body('isbn', 'isbn must not be empty').isLength({min: 1}).trim(),
+
+    // sanitize 
+    sanitizeBody('*').trim().escape(),
+    sanitizeBody('genre.*').trim().escape(),
+
+    (req, res, next) => {
+        let bookId = req.params.id; // temp book id
+        const errors = validationResult(req);
+
+        let create_book = new db_bookModel({
+                            title: req.body.title,
+                            author: req.body.author,
+                            summary: req.body.summary,
+                            isbn: req.body.isbn,
+                            genre: (typeof req.body.genre === 'undefined') ? [] : req.body.genre, // sanity checking i guess..
+                            _id: bookId     // This is required, or a new ID will be assigned!
+        })
+
+        if(!errors.isEmpty()){
+            // Error found. render back with sanitized and validated form & Error message
+            res.render('create_book', {title: 'Update Book Detail',
+                                        error: errors.array(),
+                                        book: results.Book,
+                                        authors: results.Author,
+                                        genres: results.Genre,
+            });
+        }
+        else {
+            db_bookModel.findByIdAndUpdate( bookId, 
+                                            create_book, 
+                                            {}, 
+                                            function (err, resultsUpdated) {
+                if(err) { 
+                    return next(err);
+                }
+                // Success redirect to url
+                res.redirect(resultsUpdated.url)
+            })
+        }
+    }
+    
+
+];
 
 // Display detail page for a specific book.
 exports.book_detail = function(req, res, next) {
