@@ -340,8 +340,6 @@ exports.book_update_post = [
             })
         }
     }
-    
-
 ];
 
 // Display detail page for a specific book.

@@ -58,17 +58,12 @@ router.get('/genre/update', function(req, res, next) {
 /* Book Instance page Routes*/
 router.get('/bookinstance', bookInstanceController.bookinstance_list);
 
-router.get('/bookinstance/add', function(req, res, next) {
-  res.render('create_bookinstance', {title: 'Create Book Instance'});
-});
+router.get('/bookinstance/add', bookInstanceController.bookinstance_create_get);
 
-router.get('bookinstance/delete', function(req, res, next) {
-  res.render('delete_bookinstance', {title: 'Delete Book Instance'});
-});
+router.get('/bookinstance/:id/delete', bookInstanceController.bookinstance_delete_get);
 
-router.get('bookinstance/update', function(req, res, next) {
-  res.render('update_bookinstance', {title: 'Update Book Instance'});
-});
+router.get('/bookinstance/:id/update/', bookInstanceController.bookinstance_update_get);
 
+router.get('/bookinstance/:id', bookInstanceController.bookinstance_detail);
 
 module.exports = router;
