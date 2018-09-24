@@ -43,17 +43,17 @@ router.get('/author/:id', authorController.author_detail);
 /* Genres page Routes*/
 router.get('/genres', genreController.genre_list);
 
-router.get('/genre/add', function(req, res, next) {
-  res.render('create_genre', {title: 'create genre'});
-});
+router.get('/genre/add', genreController.genre_create_get);
+router.get('/genre/add', genreController.genre_create_post);
 
-router.get('/genre/delete', function(req, res, next) {
-  res.render('delete_genre', {title: 'Delete Genre'});
-});
+router.get('/genre/:id/delete', genreController.genre_delete_get);
+router.get('/genre/:id/delete', genreController.genre_delete_post);
 
-router.get('/genre/update', function(req, res, next) {
-  res.render('update_genre', {title: 'Update Genre'});
-});
+router.get('/genre/:id/update', genreController.genre_update_get);
+router.get('/genre/:id/update', genreController.genre_update_post);
+
+router.get('/genre/:id/detail', genreController.genre_create_get);
+
 
 /* Book Instance page Routes*/
 router.get('/bookinstance', bookInstanceController.bookinstance_list);
