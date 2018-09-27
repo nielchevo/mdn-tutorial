@@ -61,8 +61,6 @@ exports.genre_create_post = [
             });
         }
     }
-
-
 ];
 
 // Display Genre delete form on GET.
