@@ -1,2 +1,1 @@
-Repo for learn web programming with nodeJS 
-from Mozilla mdn (https://developer.mozilla.org/en-US/docs/Learn)
+My repository for learning Express framework, based from mozilla's mdn tutorial <a href=https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website><b>'Express Tutorial: The Local Library website'</b></a>
